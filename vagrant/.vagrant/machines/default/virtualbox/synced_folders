@@ -1,0 +1,1 @@
+{"virtualbox":{"/vagrant-data":{"guestpath":"/vagrant-data","hostpath":"/Users/ASun/code/tests/ts-backend/vagrant/vagrant-data","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/ASun/code/tests/ts-backend/vagrant","disabled":false,"__vagrantfile":true}}}
