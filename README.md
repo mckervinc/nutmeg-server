@@ -1,4 +1,5 @@
 # Nutmeg Server
+![](https://i.imgur.com/dCCIB3a.png)
 
 Work in progress.
 
