@@ -1,12 +1,13 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
-import * as expressValidator from 'express-validator';
 import * as createError from 'http-errors';
 import * as errorHandler from 'errorhandler';
 import * as logger from 'morgan';
-import UserController from './controllers/UserController'
-import { create } from 'domain';
+import {
+    UserController,
+    PublicController
+} from './controllers'
 import {
     Response
 } from './framework'
@@ -24,7 +25,7 @@ class App {
     private config(): void {
         const app = this.express
         // Configuring middleware
-        if (process.env.DEV) {
+        if (process.env.NODE_ENV === 'development') {
             app.use(errorHandler())
             app.use(logger('dev'))
         } else {
@@ -37,28 +38,33 @@ class App {
 
     private mountRoutes(): void {
         const router = express.Router()
-        router.get('/', (req, res) => {
-            res.json({
-                message: 'Hello World'
-            })
-        })
 
-        this.express.use('/', router)
-        this.express.use('/', UserController.configure())
+        this.express.use('/', UserController.configure());
+        this.express.use('/', PublicController.configure());
     }
 
     private mountErrorHandlers(): void {
         const app = this.express
-        // 404 route handler
+        // fitting the schema and 404 route handler
         app.use((req, res, next) => {
-            next(createError(404))
+            if (res.locals.response) {
+                const response: Response = {
+                    status: 200,
+                    data: res.locals.response
+                }
+                res.status(response.status).json(response)
+            } else {
+                // should never get here unless the route was not found
+                next(createError(404))
+            }
+
         })
 
         // error handler
         app.use((err, req, res, next) => {
             const error: Response = {
                 status: err.status || 500,
-                message: err.message || 'Server error'
+                message: err.message || err || 'Server error'
             }
 
             res.status(error.status).json(error)

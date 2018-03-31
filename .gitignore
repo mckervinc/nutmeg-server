@@ -19,3 +19,10 @@ npm-debug.log
 
 # dist
 /dist
+
+# migrations
+knexfile.js
+/migrations
+
+# env
+.env

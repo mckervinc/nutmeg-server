@@ -11,5 +11,6 @@ export type AnyCallbackFunction = (...args: any[]) => any
 export interface Route {
     method: Method,
     callback: AnyCallbackFunction,
-    route: string
+    route: string,
+    validator?: any[]
 }
