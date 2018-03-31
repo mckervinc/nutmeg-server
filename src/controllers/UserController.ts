@@ -15,7 +15,9 @@ controller.addRoute({
     method: 'get',
     route: '/users/:id',
     callback: async (params) => {
-        return await db.query('users', { id: params.id })
+        return await db.query('users', {
+            id: params.id
+        })
     }
 })
 
@@ -24,6 +26,16 @@ controller.addRoute({
     route: '/users',
     callback: async (params) => {
         return await db.insert('users', params)
+    }
+})
+
+controller.addRoute({
+    method: 'delete',
+    route: '/users/:id',
+    callback: async (params) => {
+        return await db.delete('users', {
+            id: params.id
+        })
     }
 })
 

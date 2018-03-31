@@ -37,6 +37,14 @@ class DBService {
         }
     }
 
+    async delete(table: string, where = {}) {
+        try {
+            return await this.knex(table).where(where).del()
+        } catch (err) {
+            throw createError(503, 'Database error')
+        }
+    }
+
 }
 
 export default new DBService()
