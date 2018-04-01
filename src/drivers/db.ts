@@ -23,7 +23,7 @@ class DBService {
 
     async insert(table: string, what) {
         try {
-            return await this.knex(table).insert(what).then(() => what)
+            return await this.knex(table).insert(what).returning('*').then(result => result[0])
         } catch (err) {
             throw createError(503, 'Database error')
         }

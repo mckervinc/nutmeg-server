@@ -1,7 +1,7 @@
 import 'jest'
 import * as dotenv from 'dotenv';
 dotenv.config();
-import db from '../src/services/db'
+import db from '../src/drivers/db'
 
 describe('DB Connection Tests', () => {
     test('Connection works', async () => {
