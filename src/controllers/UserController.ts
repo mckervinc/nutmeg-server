@@ -1,11 +1,12 @@
 import Controller from './Controller';
-import db from '../services/db';
+import db from '../drivers/db';
+import UserService from '../services/UserService'
 
 const controller = new Controller()
 
 controller.addRoute({
     method: 'get',
-    route: '/users',
+    route: '/',
     callback: async (params) => {
         return await db.query('users')
     }
@@ -13,7 +14,7 @@ controller.addRoute({
 
 controller.addRoute({
     method: 'get',
-    route: '/users/:id',
+    route: '/:id',
     callback: async (params) => {
         return await db.query('users', {
             id: params.id
@@ -22,16 +23,8 @@ controller.addRoute({
 })
 
 controller.addRoute({
-    method: 'post',
-    route: '/users',
-    callback: async (params) => {
-        return await db.insert('users', params)
-    }
-})
-
-controller.addRoute({
     method: 'delete',
-    route: '/users/:id',
+    route: '/:id',
     callback: async (params) => {
         return await db.delete('users', {
             id: params.id
