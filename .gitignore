@@ -29,4 +29,4 @@ knexfile.js
 .env
 
 # vagrant
-/vagrant
+/vagrant/.vagrant/

@@ -22,7 +22,7 @@ class UserService {
     }
 
     async findOne(fields) {
-        const result = await db.query(USERS_TABLE, fields)
+        const result = await db.query(this.table, fields)
         if (!result.length) return null;
 
         return result[0]
@@ -30,7 +30,7 @@ class UserService {
 
     async isEmailInUse(email) {
         const normalizedEmail = validator.normalizeEmail(email)
-        const result = await db.query(USERS_TABLE, { email: normalizedEmail })
+        const result = await db.query(this.table, { email: normalizedEmail })
 
         return Boolean(result.length)
     }
@@ -42,7 +42,7 @@ class UserService {
 
         user.password = this.hashPassword(user.password)
 
-        return db.insert(USERS_TABLE, user)
+        return db.insert(this.table, user)
     }
 
     comparePassword(password, savedPassword) {

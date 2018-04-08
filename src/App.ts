@@ -16,7 +16,8 @@ import AuthService from './services/AuthService'
 import {
     UserController,
     PublicController,
-    LoginController
+    LoginController,
+    PlayerController
 } from './controllers'
 import {
     Response
@@ -73,6 +74,7 @@ class App {
         this.express.use('/users', passport.authenticate('jwt', {session: false} ), UserController.configure());
         this.express.use('/', PublicController.configure());
         this.express.use('/login', passport.authenticate('local', {session: false}), LoginController.configure())
+        this.express.use('/players', passport.authenticate('jwt', {session: false}), PlayerController.configure())
         this.express.get('/socket', (req, res) => {
             res.send(socketTest)
         })
