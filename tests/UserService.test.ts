@@ -2,7 +2,7 @@ import 'jest'
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import db from '../src/drivers/db'
+import { db } from '../src/drivers'
 import UserService from '../src/services/UserService';
 
 describe('UserService tests', () => {
