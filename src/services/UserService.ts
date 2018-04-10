@@ -1,6 +1,5 @@
 import { db } from '../drivers'
 import * as bcrypt from 'bcrypt';
-import * as validator from 'validator';
 import * as assert from 'assert';
 import * as createError from 'http-errors';
 
@@ -22,21 +21,12 @@ class UserService {
     }
 
     async findOne(fields) {
-        const result = await db.query(this.table, fields)
-        if (!result.length) return null;
-
-        return result[0]
-    }
-
-    async isEmailInUse(email) {
-        const normalizedEmail = validator.normalizeEmail(email)
-        const result = await db.query(this.table, { email: normalizedEmail })
-
-        return Boolean(result.length)
+        return await db.queryOne(this.table, fields)
     }
 
     async createUser(user: User) {
-        const emailInUse = await this.isEmailInUse(user.email)
+        // TODO MAKE SURE TO NORMALIZE THE EMAIL
+        const emailInUse = await this.findOne({email: user.email})
 
         if (emailInUse) throw createError(400, 'User already exists');
 

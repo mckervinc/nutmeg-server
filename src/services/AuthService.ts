@@ -10,15 +10,14 @@ class AuthService {
         if (!validator.isEmail(email)) {
             return done(createError(400, 'Not a valid email address'))
         }
-        const emailInUse = await UserService.isEmailInUse(email)
-
-        if (!emailInUse) {
-            return done(createError(401, 'No user associated with that email'))
-        }
 
         const user = await UserService.findOne({
-            email
+            email: validator.normalizeEmail(email)
         })
+
+        if (!user) {
+            return done(createError(401, 'No user associated with that email'))
+        }
 
         if (UserService.comparePassword(password, user.password)) {
             return done(null, user)
