@@ -4,6 +4,9 @@ dotenv.config();
 
 import AuthService from '../src/services/AuthService';
 
+//TODO check if testymcface is already in the database and if so remove him
+//TODO insert testymcface into database
+
 describe('authentication handlers work', () => {
     test('valid email/password', done => {
         AuthService.local('test@testymctestface.com', 'password', err => {
