@@ -26,14 +26,18 @@ class UserService {
     }
 
     async createUser(user: User) {
+        const normalizedEmail = validator.normalizeEmail(user.email)
+
+        if (!normalizedEmail) throw createError(400, 'Invalid email')
+
         const emailInUse = await this.findOne({
-            email: validator.normalizeEmail(user.email)
+            email: normalizedEmail
         })
 
         if (emailInUse) throw createError(400, 'User already exists');
 
         user.password = this.hashPassword(user.password)
-        user.email = validator.normalizeEmail(user.email)
+        user.email = normalizedEmail
 
         return db.insert(this.table, user)
     }
