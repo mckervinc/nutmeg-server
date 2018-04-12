@@ -1,7 +1,6 @@
 import * as knex from 'knex';
 import * as pg from 'pg';
 import * as createError from 'http-errors'
-import { db } from '.';
 
 console.log('Connecting DB...')
 pg.defaults.ssl = true
@@ -56,7 +55,7 @@ class DBService {
     }
 
     async raw(query) {
-        const result = await db.knex.raw(query)
+        const result = await this.knex.raw(query)
         return result.rows
     }
 
