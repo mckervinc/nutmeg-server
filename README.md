@@ -12,7 +12,7 @@ We use dotenv to manage the environment in local environments. This means you mu
 We use vagrant to manage a local version of the database. I've provided the Vagrantfile in the `vagrant` folder. To run, just enter the command `vagrant up` in the vagrant folder.
 
 ## Migrations
-We use [Knex](http://knexjs.org/) to manage migrations, DB connections etc. To run migrations, you need to ask Andrew for two things, the migrations folder (which I might just add to the repo if it gets too complicated) and the `knexfile.js`. 
+We use [Knex](http://knexjs.org/) to manage migrations, DB connections etc. To run migrations, you need to ask Andrew for two things, the migrations folder (which I might just add to the repo if it gets too complicated) and the `knexfile.js`. Place both files at the root of the project
 
 Once you have those you need to run
 ```
@@ -26,7 +26,7 @@ To make a new migration just run
 ```
 knex migrate:make
 ```
-For more help you can always run 
+For more help you can always run
 ```
 knex -h
 ```

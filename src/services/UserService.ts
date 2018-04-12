@@ -1,4 +1,5 @@
 import { db } from '../drivers'
+import * as validator from 'validator';
 import * as bcrypt from 'bcrypt';
 import * as assert from 'assert';
 import * as createError from 'http-errors';
@@ -25,12 +26,18 @@ class UserService {
     }
 
     async createUser(user: User) {
-        // TODO MAKE SURE TO NORMALIZE THE EMAIL
-        const emailInUse = await this.findOne({email: user.email})
+        const normalizedEmail = validator.normalizeEmail(user.email)
+
+        if (!normalizedEmail) throw createError(400, 'Invalid email')
+
+        const emailInUse = await this.findOne({
+            email: normalizedEmail
+        })
 
         if (emailInUse) throw createError(400, 'User already exists');
 
         user.password = this.hashPassword(user.password)
+        user.email = normalizedEmail
 
         return db.insert(this.table, user)
     }

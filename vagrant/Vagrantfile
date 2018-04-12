@@ -7,11 +7,12 @@
 # you're doing.
 Vagrant.configure(2) do |config|
     config.vm.box = "ubuntu/trusty64"
-    config.vm.box_url = "https://atlas.hashicorp.com/ubuntu/boxes/trusty64"
-    config.vm.host_name = "postgresql"
+    config.vm.hostname = "postgresql"
 
     config.vm.synced_folder "./vagrant-data", "/vagrant-data"
     config.vm.provision "shell", path: "./postgres-bootstrap.sh"
 
     config.vm.network "forwarded_port", guest: 5432, host: 15432
+    config.vm.define :nutmeg do |t|
+    end
 end
