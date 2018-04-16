@@ -3,6 +3,10 @@ dotenv.config()
 import app from './App';
 import * as http from 'http';
 import * as socketIo from 'socket.io'
+import {
+    createGame,
+    listGames
+ } from './drivers/redis'
 
 const port = process.env.PORT || 3000;
 const onError = (error) => {
@@ -45,11 +49,24 @@ const server = http.createServer(app)
 // binding the socket server
 const io = socketIo(server)
 
+const dispatcher = (type, obj, toid) => {
+    console.log(obj)
+    io.to(toid).emit(type, obj)
+}
+
 io.on('connection', socket => {
+    console.log('user connected', socket.id)
+    createGame(socket.id, dispatcher)
+    listGames()
     socket.on('message', msg => {
         io.emit('message', msg)
     })
+
+    socket.on('disconnect', () => {
+        console.log('user disconnected')
+    })
 })
+
 server.listen(port);
 server.on('error', onError)
 server.on('listening', onListening)

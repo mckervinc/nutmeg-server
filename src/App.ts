@@ -18,7 +18,8 @@ import {
     PublicController,
     LoginController,
     PlayerController,
-    RefreshController
+    RefreshController,
+    ChallengeController
 } from './controllers'
 import {
     Response
@@ -77,6 +78,9 @@ class App {
         this.express.use('/login', passport.authenticate('local', {session: false}), LoginController.configure())
         this.express.use('/refresh', passport.authenticate('jwt', {session: false}), RefreshController.configure())
         this.express.use('/players', passport.authenticate('jwt', {session: false}), PlayerController.configure())
+        this.express.use('/challenges', passport.authenticate('jwt', { session: false }), ChallengeController.configure())
+
+        // TODO REMOVE AFTER TESTS ARE DONE W/ SOCKETS
         this.express.get('/socket', (req, res) => {
             res.send(socketTest)
         })
