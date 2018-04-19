@@ -1,5 +1,6 @@
 import { db } from '../drivers'
 import * as uuid from 'uuid/v4'
+import UserService from './UserService'
 
 class ChallengeService {
     private challenges
@@ -9,6 +10,7 @@ class ChallengeService {
 
     async createChallenge(hostId, typeId, invitees) {
         const challengeId = uuid()
+        /// error checking on number of invitees
         // TODO implement this as a transaction so its rolled back if all of it fails
         try {
             await db.insert(this.challenges, {
@@ -19,10 +21,11 @@ class ChallengeService {
                 has_accepted: true
             })
             await Promise.all(
-                invitees.map(id => {
+                invitees.map(async username => {
+                    const userInfo = await UserService.findOne({ username })
                     return db.insert(this.challenges, {
                         id: challengeId,
-                        user_id: id,
+                        user_id: userInfo.id,
                         challenge_type_id: typeId,
                         is_host: false,
                         has_accepted: false,

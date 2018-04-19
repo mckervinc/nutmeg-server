@@ -25,6 +25,13 @@ class UserService {
         return await db.queryOne(this.table, fields)
     }
 
+    // STUB in production make this friends
+    async listFriends() {
+        const friends = await db.query(this.table)
+        console.log(friends)
+        return friends.map(friend => friend.username)
+    }
+
     async createUser(user: User) {
         const normalizedEmail = validator.normalizeEmail(user.email)
 

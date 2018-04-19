@@ -7,7 +7,7 @@ controller.addRoute({
     method: 'post',
     route: '/create',
     callback: async (params, req, res) => {
-        return await ChallengeService.createChallenge(req.user.id, params.typeId, [1])
+        return ChallengeService.createChallenge(req.user.id, params.typeId, params.invitees)
     }
 })
 
@@ -15,7 +15,7 @@ controller.addRoute({
     method: 'get',
     route: '/',
     callback: async (params, req, res) => {
-        return await ChallengeService.listChallenges(req.user.id)
+        return ChallengeService.listChallenges(req.user.id)
     }
 })
 

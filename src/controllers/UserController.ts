@@ -8,7 +8,7 @@ controller.addRoute({
     method: 'get',
     route: '/',
     callback: async (params) => {
-        return await db.query('users')
+        return UserService.listFriends()
     }
 })
 

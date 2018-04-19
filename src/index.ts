@@ -56,9 +56,8 @@ const dispatcher = (type, obj, toid) => {
 
 io.on('connection', socket => {
     console.log('user connected', socket.id)
-    createGame(socket.id, dispatcher)
-    listGames()
     socket.on('message', msg => {
+        console.log(msg)
         io.emit('message', msg)
     })
 
