@@ -1,15 +1,23 @@
 {
     "name": "nutmeg-server",
     "scripts": {},
-    "env": {},
+    "env": {
+        "DATABASE_URL": {
+            "required": true
+        },
+        "JWT_SECRET": {
+            "required": true
+        },
+        "REDISCLOUD_URL": {
+            "required": true
+        }
+    },
     "formation": {
         "web": {
             "quantity": 1
         }
     },
-    "addons": [
-        "heroku-postgresql"
-    ],
+    "addons": [],
     "buildpacks": [
         {
             "url": "heroku/nodejs"
