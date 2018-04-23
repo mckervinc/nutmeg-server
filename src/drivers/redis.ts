@@ -11,7 +11,7 @@ client.on('connect', () => {
 });
 
 export const createGame = (sessionId, dispatcher) => {
-    var gamename = 'game';
+    const gamename = 'game';
     client.hmsetAsync(
         gamename, [
             'player1',
@@ -27,3 +27,5 @@ export const listGames = async () => {
     const result = await client.hgetallAsync('game')
     console.dir(result)
 }
+
+export default client

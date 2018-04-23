@@ -10,6 +10,9 @@
         },
         "REDISCLOUD_URL": {
             "required": true
+        },
+        "SENTRY_DSN": {
+            "required": true
         }
     },
     "formation": {

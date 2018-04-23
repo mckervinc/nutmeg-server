@@ -1,4 +1,4 @@
-import Controller from './Controller'
+import Controller from './controller'
 import * as jwt from 'jsonwebtoken'
 import * as _ from 'lodash'
 

@@ -1,5 +1,5 @@
-import Controller from './Controller'
-import ChallengeService from '../services/ChallengeService'
+import Controller from './controller'
+import * as ChallengeService from '../services/challenge'
 
 const controller = new Controller()
 
@@ -15,7 +15,7 @@ controller.addRoute({
     method: 'get',
     route: '/',
     callback: async (params, req, res) => {
-        return ChallengeService.listChallenges(req.user.id)
+        return ChallengeService.listChallengesByUser(req.user.id)
     }
 })
 

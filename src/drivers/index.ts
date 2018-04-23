@@ -1,7 +1,9 @@
-import db from './db';
-import faker from './faker';
+import sequelize from './sequelize';
+import socket from './socket';
+import redis from './redis'
 
 export {
-    db,
-    faker
+    sequelize,
+    socket,
+    redis
 }

@@ -5,6 +5,8 @@ import * as createError from 'http-errors';
 import * as errorHandler from 'errorhandler';
 import * as logger from 'morgan';
 import * as passport from 'passport';
+import * as Raven from 'raven';
+import * as path from 'path'
 import {
     Strategy as LocalStrategy
 } from 'passport-local';
@@ -12,7 +14,7 @@ import {
     Strategy as JwtStrategy,
     ExtractJwt
 } from 'passport-jwt'
-import AuthService from './services/AuthService'
+import * as AuthService from './services/auth'
 import {
     UserController,
     PublicController,
@@ -24,6 +26,8 @@ import {
 import {
     Response
 } from './framework'
+
+const root = global.__rootdir__;
 
 class App {
     public express
@@ -46,6 +50,23 @@ class App {
             app.use(errorHandler())
             app.use(logger('dev'))
         } else {
+            // SENTRY CONFIG
+            Raven.config(process.env.SENTRY_DSN, {
+                dataCallback: (data) => {
+                    const stacktrace = data.exception && data.exception[0].stacktrace;
+
+                    if (stacktrace && stacktrace.frames) {
+                        stacktrace.frames.forEach((frame) => {
+                            if (frame.filename.startsWith('/')) {
+                                frame.filename = 'app:///' + path.relative(root, frame.filename);
+                            }
+                        });
+                    }
+
+                    return data;
+                }
+            }).install()
+            app.use(Raven.requestHandler())
             app.use(logger('short'))
         }
         app.use(compression())
@@ -92,6 +113,7 @@ class App {
 
     private mountErrorHandlers(): void {
         const app = this.express
+        app.use(Raven.errorHandler())
         // fitting the schema and 404 route handler
         app.use((req, res, next) => {
             if (res.locals.response) {
