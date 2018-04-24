@@ -10,11 +10,10 @@ controller.addRoute({
     callback: async (params) => {
         if (params.id) {
             const player: any = await PlayerService.findById(params.id)
-            console.log(player.get({plain: true}))
-            return player.get({plain: true})
+            return player
         }
-        if (params.opta_id) {
-            return await PlayerService.findByOptaId(params.opta_id)
+        if (params.optaId) {
+            return await PlayerService.findByOptaId(params.optaId)
         }
         throw createError(400)
     }
@@ -25,7 +24,7 @@ controller.addRoute({
     route: '/stats',
     callback: async (params) => {
         if (params.id) {
-            return await PlayerService.getPlayerStats(params.id)
+            return PlayerService.findStatsById(params.id)
         }
 
         throw createError(400)

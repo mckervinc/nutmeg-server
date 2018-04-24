@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../drivers';
 import Club from './club'
+import PlayerStat from './playerStat'
 
 const TABLE_NAME = 'player' // sequelize will automatically make this plural
 
@@ -8,7 +9,6 @@ const FIELDS: Sequelize.DefineAttributes = {
     optaId: {
         type: Sequelize.STRING,
         allowNull: false,
-        field: 'opta_id',
         unique: true
     },
     name: {
@@ -18,7 +18,6 @@ const FIELDS: Sequelize.DefineAttributes = {
     shortName: {
         type: Sequelize.STRING,
         allowNull: false,
-        field: 'short_name'
     },
     position: {
         type: Sequelize.STRING,
@@ -27,7 +26,6 @@ const FIELDS: Sequelize.DefineAttributes = {
     birthDate: {
         type: Sequelize.DATEONLY,
         allowNull: false,
-        field: 'birth_date'
     },
     country: {
         type: Sequelize.STRING,
@@ -44,20 +42,20 @@ const FIELDS: Sequelize.DefineAttributes = {
     },
     realPosition: {
         type: Sequelize.STRING,
-        field: 'real_position'
     },
     realPositionSide: {
         type: Sequelize.STRING,
-        field: 'real_position_side'
     }
 }
 
 const OPTIONS = {
     paranoid: true,
-    underscored: true
 }
 
 const Player = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
-Player.belongsTo(Club)
 
+Player.associate = (models) => {
+    Player.hasMany(models.PlayerStat)
+    Player.belongsTo(models.Club)
+}
 export default Player

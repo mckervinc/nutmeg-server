@@ -93,10 +93,11 @@ class App {
 
     private mountRoutes(): void {
         const router = express.Router()
+        this.express.use('/', PublicController.configure());
+
+        this.express.use('/login', passport.authenticate('local', {session: false}), LoginController.configure())
 
         this.express.use('/users', passport.authenticate('jwt', {session: false} ), UserController.configure());
-        this.express.use('/', PublicController.configure());
-        this.express.use('/login', passport.authenticate('local', {session: false}), LoginController.configure())
         this.express.use('/refresh', passport.authenticate('jwt', {session: false}), RefreshController.configure())
         this.express.use('/players', passport.authenticate('jwt', {session: false}), PlayerController.configure())
         this.express.use('/challenges', passport.authenticate('jwt', { session: false }), ChallengeController.configure())

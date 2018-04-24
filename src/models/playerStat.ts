@@ -1,7 +1,5 @@
 import * as Sequelize from 'sequelize'
 import { sequelize } from '../drivers'
-import Fixture from './fixture'
-import Player from './player'
 
 const TABLE_NAME = 'player_stat' // sequelize will automatically make this plural
 
@@ -9,12 +7,10 @@ const FIELDS: Sequelize.DefineAttributes = {
     isHome: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        field: 'is_home'
     },
     isStarter: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        field: 'is_starter'
     },
     stats: {
         type: Sequelize.JSON,
@@ -25,11 +21,14 @@ const FIELDS: Sequelize.DefineAttributes = {
 
 const OPTIONS = {
     paranoid: true,
-    underscored: true
 }
 
 const PlayerStat = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
-PlayerStat.belongsTo(Player)
-PlayerStat.belongsTo(Fixture)
+
+PlayerStat.associate = (models) => {
+    PlayerStat.belongsTo(models.Player)
+    PlayerStat.belongsTo(models.Fixture)
+
+}
 
 export default PlayerStat

@@ -7,12 +7,10 @@ const FIELDS: Sequelize.DefineAttributes = {
     firstName: {
         type: Sequelize.STRING,
         allowNull: false,
-        field: 'first_name'
     },
     lastName: {
         type: Sequelize.STRING,
         allowNull: false,
-        field: 'last_name'
     },
     username: {
         type: Sequelize.STRING,
@@ -38,9 +36,12 @@ const FIELDS: Sequelize.DefineAttributes = {
 
 const OPTIONS = {
     paranoid: true,
-    underscored: true
 }
 
 const User = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
+
+User.associate = (models) => {
+    User.hasMany(models.Challenge)
+}
 
 export default User

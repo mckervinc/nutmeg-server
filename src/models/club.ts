@@ -7,7 +7,6 @@ const FIELDS: Sequelize.DefineAttributes = {
     optaId: {
         type: Sequelize.STRING,
         allowNull: false,
-        field: 'opta_id',
         unique: true
     },
     name: {
@@ -17,16 +16,21 @@ const FIELDS: Sequelize.DefineAttributes = {
     shortName: {
         type: Sequelize.STRING,
         allowNull: false,
-        field: 'short_name',
         unique: true
     }
 }
 
 const OPTIONS = {
-    underscored: true,
+    paranoid: true,
     timestamps: false,
 }
 
 const Club = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
+
+Club.associate = (models) => {
+    Club.hasMany(models.Player)
+    Club.hasMany(models.Fixture, { as: 'Home', foreignKey: 'home' })
+    Club.hasMany(models.Fixture, { as: 'Away', foreignKey: 'away' })
+}
 
 export default Club

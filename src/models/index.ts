@@ -1,7 +1,27 @@
-export { default as Challenge } from './challenge'
-export { default as ChallengeType } from './challengeType'
-export { default as Club } from './club'
-export { default as Fixture } from './fixture'
-export { default as Player } from './player'
-export { default as PlayerStat } from './playerStat'
-export { default as User } from './user'
+import Challenge from './challenge'
+import ChallengeType from './challengeType'
+import Club from './club'
+import Fixture from './fixture'
+import Player from './player'
+import PlayerStat from './playerStat'
+import User from './user'
+import { sequelize } from '../drivers'
+
+const db = {
+    Challenge,
+    ChallengeType,
+    Club,
+    Fixture,
+    Player,
+    PlayerStat,
+    User,
+    sequelize
+}
+
+Object.keys(db).forEach((key: any) => {
+    if (db[key].associate) {
+        db[key].associate(db)
+    }
+})
+
+export default db

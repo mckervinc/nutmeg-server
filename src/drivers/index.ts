@@ -1,9 +1,3 @@
-import sequelize from './sequelize';
-import socket from './socket';
-import redis from './redis'
-
-export {
-    sequelize,
-    socket,
-    redis
-}
+export { default as sequelize } from './sequelize';
+export { default as socket } from './socket';
+// export { default as redis } from './redis'
