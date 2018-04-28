@@ -1,9 +1,12 @@
-import {
+import models from '../models'
+import { Op } from 'sequelize'
+const {
     Player,
     Club,
     PlayerStat,
-    Fixture
- } from '../models'
+    Fixture,
+    sequelize
+ } = models;
 
 export const findById = async (id: number) => {
     return Player.findById(id, {
@@ -13,14 +16,52 @@ export const findById = async (id: number) => {
 
 export const findByOptaId = async (optaId: string) => {
     return Player.findOne({
-        where: { optaId }
+        where: { optaId },
+        include: [ Club ]
     })
 }
 
-export const findStatsById = async (id: number) => {
-    return PlayerStat.findById(id)
-    // return PlayerStat.findAll({
-    //     where: { playerId: id },
-    //     include: [ Fixture ]
-    // })
+
+export const findAll = async () => {
+    return Player.findAll({
+        limit: 500,
+        include: [ Club ]
+    })
+}
+
+export const findByName = async (name) => {
+    return findBySearchField({ name })
+}
+
+export const findByPosition = async (position) => {
+    return findBySearchField({ position })
+}
+
+export const findBySearchField = async (fields) => {
+    const query = convertFieldsToSearchQuery(fields)
+    return Player.findAll({
+        where: query,
+        include: [ Club ]
+    })
+}
+
+const convertFieldsToSearchQuery = (fields) => {
+    const query = {}
+    Object.keys(fields).forEach(key => {
+        query[key] = {
+            [Op.iLike]: `%${fields[key]}%`
+        }
+    })
+    return query
+}
+
+export const findStatsById = async (id: number, limit = 5) => {
+    return PlayerStat.findAll({
+        where: {
+            playerId: id
+        },
+        include: [Fixture],
+        order: [[Fixture, 'gameDate', 'DESC']],
+        limit
+    })
 }

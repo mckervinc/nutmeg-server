@@ -1,7 +1,9 @@
 import * as uuid from 'uuid/v4'
-import { Challenge } from '../models'
+import models from '../models'
 import * as createError from 'http-errors'
 import * as Sequelize from 'sequelize';
+
+const { Challenge } = models;
 
 export const createChallenge = async (hostId: number, typeId: number, invitees: number[]) => {
     const challengeId = uuid()

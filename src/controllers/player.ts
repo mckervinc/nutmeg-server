@@ -8,14 +8,26 @@ controller.addRoute({
     method: 'get',
     route: '/',
     callback: async (params) => {
-        if (params.id) {
-            const player: any = await PlayerService.findById(params.id)
-            return player
+        const {
+            id,
+            optaId,
+            name,
+            position
+        } = params
+
+        if (id) {
+            return PlayerService.findById(id)
         }
-        if (params.optaId) {
-            return await PlayerService.findByOptaId(params.optaId)
+        if (optaId) {
+            return PlayerService.findByOptaId(optaId)
         }
-        throw createError(400)
+        if (name) {
+            return PlayerService.findByName(name)
+        }
+        if (position) {
+            return PlayerService.findByPosition(position)
+        }
+        return PlayerService.findAll()
     }
 })
 
@@ -23,11 +35,14 @@ controller.addRoute({
     method: 'get',
     route: '/stats',
     callback: async (params) => {
-        if (params.id) {
-            return PlayerService.findStatsById(params.id)
-        }
+        const {
+            id,
+        } = params
 
-        throw createError(400)
+        if (id) {
+            return PlayerService.findStatsById(id)
+        }
+        throw createError(400, 'You must provide a player id')
     }
 })
 

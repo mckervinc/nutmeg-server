@@ -29,8 +29,6 @@ const Club = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
 
 Club.associate = (models) => {
     Club.hasMany(models.Player)
-    Club.hasMany(models.Fixture, { as: 'Home', foreignKey: 'home' })
-    Club.hasMany(models.Fixture, { as: 'Away', foreignKey: 'away' })
 }
 
 export default Club

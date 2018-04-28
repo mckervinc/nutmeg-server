@@ -2,7 +2,9 @@ import * as validator from 'validator';
 import * as bcrypt from 'bcrypt';
 import * as createError from 'http-errors';
 
-import { User } from '../models'
+import models from '../models'
+
+const { User } = models;
 
 const SALT_ROUNDS = 10;
 
@@ -28,8 +30,7 @@ export const createUser = async (user) => {
     user.password = this.hashPassword(user.password)
 
     try {
-        const createdUser: any = await User.create(user)
-        return createdUser.get({ plain: true })
+        return await User.create(user)
     } catch (error) {
         throw createError(400, error.errors[0])
     }

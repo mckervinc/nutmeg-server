@@ -30,8 +30,8 @@ const OPTIONS = {
 const Fixture = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
 
 Fixture.associate = (models) => {
-    Fixture.belongsTo(models.Club, { foreignKey: 'home' })
-    Fixture.belongsTo(models.Club, { foreignKey: 'away' })
-
+    Fixture.belongsTo(models.Club, { as: 'home' })
+    Fixture.belongsTo(models.Club, { as: 'away' })
+    Fixture.hasMany(models.ChallengeType)
 }
 export default Fixture
