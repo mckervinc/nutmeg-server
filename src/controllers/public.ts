@@ -1,5 +1,5 @@
-import Controller from './Controller';
-import UserService from '../services/UserService'
+import Controller from './controller';
+import * as UserService from '../services/user'
 import io from '../'
 import * as createError from 'http-errors'
 const controller = new Controller();
@@ -24,7 +24,7 @@ controller.addRoute({
     method: 'post',
     route: '/create',
     callback: async (params) => {
-        return await UserService.createUser(params)
+        return UserService.createUser(params)
     }
 })
 

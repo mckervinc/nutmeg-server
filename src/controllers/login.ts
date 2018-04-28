@@ -1,4 +1,4 @@
-import Controller from './Controller';
+import Controller from './controller';
 import * as passport from 'passport';
 import * as jwt from 'jsonwebtoken';
 import * as createError from 'http-errors'

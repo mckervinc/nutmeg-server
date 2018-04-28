@@ -1,4 +1,4 @@
-import Controller from './Controller'
+import Controller from './controller'
 import * as jwt from 'jsonwebtoken'
 import * as _ from 'lodash'
 
@@ -11,8 +11,8 @@ controller.addRoute({
         if (req.user) {
             const user = _.pick(req.user, [
                 'id',
-                'first_name',
-                'last_name',
+                'firstName',
+                'lastName',
                 'email',
                 'username'
             ])

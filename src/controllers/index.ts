@@ -1,9 +1,11 @@
-import PublicController from './PublicController';
-import UserController from './UserController';
-import LoginController from './LoginController';
-import PlayerController from './PlayerController';
-import RefreshController from './RefreshController';
-import ChallengeController from './ChallengeController';
+import PublicController from './public';
+import UserController from './user';
+import LoginController from './login';
+import PlayerController from './player';
+import RefreshController from './refresh';
+import ChallengeController from './challenge';
+import ClubController from './club';
+import FixtureController from './fixture';
 
 export {
     PublicController,
@@ -11,5 +13,7 @@ export {
     LoginController,
     PlayerController,
     RefreshController,
-    ChallengeController
+    ChallengeController,
+    ClubController,
+    FixtureController
 }

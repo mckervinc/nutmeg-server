@@ -23,6 +23,7 @@ npm-debug.log
 
 # migrations
 knexfile.js
+/scripts
 
 # env
 .env

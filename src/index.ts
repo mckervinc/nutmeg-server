@@ -7,6 +7,18 @@ import {
     createGame,
     listGames
  } from './drivers/redis'
+import socketHandler from './drivers/socket'
+
+// SENTRY CONFIG
+declare global {
+    namespace NodeJS {
+        interface Global {
+            __rootdir__: string;
+        }
+    }
+}
+
+global.__rootdir__ = __dirname || process.cwd();
 
 const port = process.env.PORT || 3000;
 const onError = (error) => {
@@ -49,22 +61,7 @@ const server = http.createServer(app)
 // binding the socket server
 const io = socketIo(server)
 
-const dispatcher = (type, obj, toid) => {
-    console.log(obj)
-    io.to(toid).emit(type, obj)
-}
-
-io.on('connection', socket => {
-    console.log('user connected', socket.id)
-    socket.on('message', msg => {
-        console.log(msg)
-        io.emit('message', msg)
-    })
-
-    socket.on('disconnect', () => {
-        console.log('user disconnected')
-    })
-})
+socketHandler(io)
 
 server.listen(port);
 server.on('error', onError)
