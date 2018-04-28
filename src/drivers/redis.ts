@@ -10,22 +10,22 @@ client.on('connect', () => {
     console.log('connected to redis')
 });
 
-export const createGame = (sessionId, dispatcher) => {
-    const gamename = 'game';
-    client.hmsetAsync(
-        gamename, [
-            'player1',
-            sessionId,
-            'player2',
-            ''
-        ]
-    )
-    dispatcher('game', {name: gamename, player: 'player1'}, sessionId)
-}
+// export const createGame = (sessionId, dispatcher) => {
+//     const gamename = 'game';
+//     client.hmsetAsync(
+//         gamename, [
+//             'player1',
+//             sessionId,
+//             'player2',
+//             ''
+//         ]
+//     )
+//     dispatcher('game', {name: gamename, player: 'player1'}, sessionId)
+// }
 
-export const listGames = async () => {
-    const result = await client.hgetallAsync('game')
-    console.dir(result)
-}
+// export const listGames = async () => {
+//     const result = await client.hgetallAsync('game')
+//     console.dir(result)
+// }
 
 export default client

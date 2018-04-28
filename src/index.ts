@@ -3,10 +3,6 @@ dotenv.config()
 import app from './App';
 import * as http from 'http';
 import * as socketIo from 'socket.io'
-import {
-    createGame,
-    listGames
- } from './drivers/redis'
 import socketHandler from './drivers/socket'
 
 // SENTRY CONFIG
