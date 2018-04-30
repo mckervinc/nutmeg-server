@@ -53,21 +53,7 @@ class App {
             app.use(logger('dev'))
         } else {
             // SENTRY CONFIG
-            Raven.config(process.env.SENTRY_DSN, {
-                dataCallback: (data) => {
-                    const stacktrace = data.exception && data.exception[0].stacktrace;
-
-                    if (stacktrace && stacktrace.frames) {
-                        stacktrace.frames.forEach((frame) => {
-                            if (frame.filename.startsWith('/')) {
-                                frame.filename = 'app:///' + path.relative(root, frame.filename);
-                            }
-                        });
-                    }
-
-                    return data;
-                }
-            }).install()
+            Raven.config(process.env.SENTRY_DSN).install()
             app.use(Raven.requestHandler())
             app.use(logger('short'))
         }
