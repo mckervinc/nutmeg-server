@@ -2,6 +2,8 @@ import Controller from './controller';
 import * as UserService from '../services/user'
 import io from '../'
 import * as createError from 'http-errors'
+import * as _ from 'lodash'
+import * as jwt from 'jsonwebtoken'
 const controller = new Controller();
 
 controller.addRoute({
@@ -24,7 +26,15 @@ controller.addRoute({
     method: 'post',
     route: '/create',
     callback: async (params) => {
-        return UserService.createUser(params)
+        const newUser = await UserService.createUser(params)
+        const user = _.pick(newUser, [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'username'
+        ])
+        return jwt.sign(user, process.env.JWT_SECRET)
     }
 })
 

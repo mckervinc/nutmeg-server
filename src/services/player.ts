@@ -21,7 +21,6 @@ export const findByOptaId = async (optaId: string) => {
     })
 }
 
-
 export const findAll = async () => {
     return Player.findAll({
         limit: 500,
@@ -60,7 +59,15 @@ export const findStatsById = async (id: number, limit = 5) => {
         where: {
             playerId: id
         },
-        include: [Fixture],
+        include: [
+            {
+                model: Fixture,
+                include: [
+                    { model: Club, as: 'home' },
+                    { model: Club, as: 'away' }
+                ]
+            }
+        ],
         order: [[Fixture, 'gameDate', 'DESC']],
         limit
     })
