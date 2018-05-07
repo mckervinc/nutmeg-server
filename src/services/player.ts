@@ -72,3 +72,21 @@ export const findStatsById = async (id: number, limit = 5) => {
         limit
     })
 }
+
+export const upsertStat = async (id, optaFixtureId, stats) => {
+    if (typeof id === 'string') {
+        const player: any = await findByOptaId(id)
+        id = player.id
+    }
+    const fixture: any = await Fixture.findOne({
+        where: { optaId: optaFixtureId }
+    })
+    const fixtureId = fixture.id
+    await PlayerStat.upsert({
+        fixtureId,
+        playerId: id,
+        isStarter: stats.game_started ? true : false,
+        isHome: stats.side === 'Home' ? true : false,
+        stats
+    })
+}

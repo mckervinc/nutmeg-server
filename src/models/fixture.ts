@@ -33,5 +33,6 @@ Fixture.associate = (models) => {
     Fixture.belongsTo(models.Club, { as: 'home' })
     Fixture.belongsTo(models.Club, { as: 'away' })
     Fixture.hasMany(models.ChallengeType)
+    Fixture.hasMany(models.PlayerStat)
 }
 export default Fixture

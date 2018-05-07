@@ -26,8 +26,8 @@ const OPTIONS = {
 const PlayerStat = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
 
 PlayerStat.associate = (models) => {
-    PlayerStat.belongsTo(models.Player)
-    PlayerStat.belongsTo(models.Fixture)
+    PlayerStat.belongsTo(models.Player, { foreignKey: { unique: 'player_fixture' } })
+    PlayerStat.belongsTo(models.Fixture, { foreignKey: { unique: 'player_fixture' } })
 
 }
 
