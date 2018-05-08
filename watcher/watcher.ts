@@ -6,7 +6,8 @@ import * as path from 'path'
 import { Parser } from 'xml2js'
 import * as PlayerService from '../src/services/player'
 import models from '../src/models'
-const { Fixture, Club } = models
+const { Fixture, Club, sequelize } = models
+sequelize.options.logging = false
 
 // WATCH
 
@@ -109,13 +110,12 @@ const parseMatchResult = async (fileName) => {
     const teamData = matchData.TeamData
     return Promise.all(
         teamData.map(team => {
-            const side = team.$.Side
+            const isHome = team.$.Side === 'Home'
             return Promise.all(
                 team.PlayerLineUp.MatchPlayer.map(player => {
                     const optaId = player.$.PlayerRef
-                    const playerStat: any = {
-                        side
-                    }
+                    const isStarter = player.$.Status === 'Start'
+                    const playerStat: any = {}
                     if (player.Stat.length) {
                         player.Stat.forEach(stat => {
                             playerStat[stat.$.Type] = stat._
@@ -123,9 +123,7 @@ const parseMatchResult = async (fileName) => {
                     } else {
                         playerStat[player.Stat.$.Type] = player.Stat._
                     }
-                    if (playerStat.mins_played) {
-                        return PlayerService.upsertStat(optaId, optaFixtureId, playerStat)
-                    }
+                    return PlayerService.upsertStat(optaId, optaFixtureId, playerStat, isHome, isStarter)
                 })
             )
         })
