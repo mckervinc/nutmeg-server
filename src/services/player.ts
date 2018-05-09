@@ -73,7 +73,7 @@ export const findStatsById = async (id: number, limit = 5) => {
     })
 }
 
-export const upsertStat = async (id, optaFixtureId, stats) => {
+export const upsertStat = async (id, optaFixtureId, stats, isHome, isStarter) => {
     if (typeof id === 'string') {
         const player: any = await findByOptaId(id)
         id = player.id
@@ -85,8 +85,8 @@ export const upsertStat = async (id, optaFixtureId, stats) => {
     await PlayerStat.upsert({
         fixtureId,
         playerId: id,
-        isStarter: stats.game_started ? true : false,
-        isHome: stats.side === 'Home' ? true : false,
+        isStarter,
+        isHome,
         stats
     })
 }
