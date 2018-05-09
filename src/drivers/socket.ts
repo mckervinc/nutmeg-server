@@ -5,7 +5,6 @@ const socketHandler = (io: SocketIO.Server) => {
         const challenge = socket.handshake.query.challenge
         socket.join(challenge)
         socket.on('message', msg => {
-            console.log(challenge)
             io.to(challenge).emit('message', msg)
         })
 
