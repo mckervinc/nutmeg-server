@@ -45,6 +45,10 @@ const FIELDS: Sequelize.DefineAttributes = {
     },
     realPositionSide: {
         type: Sequelize.STRING,
+    },
+    leaveDate: {
+        type: Sequelize.DATEONLY,
+        defaultValue: null
     }
 }
 

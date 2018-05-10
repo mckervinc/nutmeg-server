@@ -29,6 +29,7 @@ const Club = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
 
 Club.associate = (models) => {
     Club.hasMany(models.Player)
+    Club.hasMany(models.Standing)
 }
 
 export default Club
