@@ -5,6 +5,7 @@ import Fixture from './fixture'
 import Player from './player'
 import PlayerStat from './playerStat'
 import User from './user'
+import Standing from './standing'
 import { sequelize } from '../drivers'
 
 const db = {
@@ -15,6 +16,7 @@ const db = {
     Player,
     PlayerStat,
     User,
+    Standing,
     sequelize
 }
 

@@ -73,20 +73,24 @@ export const findStatsById = async (id: number, limit = 5) => {
     })
 }
 
-export const upsertStat = async (id, optaFixtureId, stats, isHome, isStarter) => {
-    if (typeof id === 'string') {
-        const player: any = await findByOptaId(id)
+export const upsertStat = async (optaId, optaFixtureId, stats, isHome, isStarter, transaction) => {
+    let id
+    if (typeof optaId === 'string') {
+        const player: any = await findByOptaId(optaId)
+        if (!player) {
+            throw new Error(`optaId: ${optaId} not found`)
+        }
         id = player.id
     }
     const fixture: any = await Fixture.findOne({
         where: { optaId: optaFixtureId }
     })
     const fixtureId = fixture.id
-    await PlayerStat.upsert({
+    return PlayerStat.upsert({
         fixtureId,
         playerId: id,
         isStarter,
         isHome,
         stats
-    })
+    }, { transaction })
 }
