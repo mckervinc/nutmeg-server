@@ -12,11 +12,11 @@ const { Player, Fixture, Club, Standing, sequelize } = models
 sequelize.options.logging = false
 
 Raven.config(process.env.SENTRY_DSN).install();
-// WATCH
 
 const parser = new Parser({ normalize: true, explicitArray: false })
 
 const feedPath = process.env.FEED_PATH
+const DELAY_RATE = 1000
 
 const parseString = (data) => {
     return new Promise((resolve, reject) => {
@@ -34,77 +34,65 @@ export const wait = (ms = 5000) => new Promise((resolve) => {
     setTimeout(() => resolve(), ms);
 });
 
-let DELAY_FACTOR = 0
-const DELAY_RATE: number = parseInt(process.env.DELAY_RATE, 10) || 1000
+const queue: string[] = []
+let processing = false
 
-fs.watch(feedPath, async (eventType, filename) => {
+fs.watch(feedPath, (eventType, filename) => {
     if (filename) {
         const filePath = path.join(feedPath, filename)
         if (fs.existsSync(filePath)) {
-            // WOW WHAT A HACKY WAY TO DELAY TOO MANY CONCURRENT FILES BEING UPLOADED
-            DELAY_FACTOR += 1
-            await wait(DELAY_FACTOR * DELAY_RATE)
-            // MUCH WOW
-
-            const transaction: Sequelize.Transaction = await sequelize.transaction()
-            if (filename.includes('matchresults.xml')) {
-                console.log('Upserting', filename)
-                try {
-                    await parseMatchResult(filePath, transaction)
-                    await transaction.commit()
-                    console.log('Upserted', filename)
-                } catch (error) {
-                    console.error('[WATCHER-ERROR]', error)
-                    await transaction.rollback()
-                    Raven.captureException(error)
-
-                }
-            }
-
-            if (filename.includes('-results.xml')) {
-                console.log('Upserting', filename)
-                try {
-                    await parseResults(filePath, transaction)
-                    await transaction.commit()
-                    console.log('Upserted', filename)
-                } catch (error) {
-                    console.error('[WATCHER-ERROR]', error)
-                    await transaction.rollback()
-                    Raven.captureException(error)
-                }
-            }
-
-            if (filename.includes('-standings.xml')) {
-                console.log('Upserting', filename)
-                try {
-                    await parseStandings(filePath, transaction)
-                    await transaction.commit()
-                    console.log('Upserted', filename)
-                } catch (error) {
-                    console.error('[WATCHER-ERROR]', error)
-                    await transaction.rollback()
-                    Raven.captureException(error)
-                }
-            }
-
-            if (filename.includes('-squads.xml')) {
-                console.log('Upserting', filename)
-                try {
-                    await parseSquads(filePath, transaction)
-                    await transaction.commit()
-                    console.log('Upserted', filename)
-                } catch (error) {
-                    console.error('[WATCHER-ERROR]', error)
-                    await transaction.rollback()
-                    Raven.captureException(error)
+            if (queue.indexOf(filePath) === -1) {
+                console.log('Adding', filename, 'to the queue...')
+                queue.unshift(filePath)
+                if (!processing) {
+                    startProcess()
                 }
             }
         }
-        // WOW
-        DELAY_FACTOR -= 1
-        // WOW
     }
 })
+const startProcess = async () => {
+    processing = true
+    while (queue.length) {
+        const filePath = queue[queue.length - 1]
+        try {
+            console.log('Attempting to upsert', path.basename(filePath))
+            await processFile(filePath)
+            queue.pop()
+            console.log('Succesfully upserted', path.basename(filePath))
+        } catch (error) {
+            queue.pop()
+            console.error(error)
+            Raven.captureException(error)
+        }
+    }
+    processing = false
+}
+
+const processFile = async (filePath) => {
+    const filename = path.basename(filePath)
+    const transaction: Sequelize.Transaction = await sequelize.transaction()
+
+    try {
+        if (filename.includes('-matchresults.xml')) {
+            await parseMatchResult(filePath, transaction)
+        }
+        if (filename.includes('-results.xml')) {
+            await parseResults(filePath, transaction)
+        }
+        if (filename.includes('-standings.xml')) {
+            await parseStandings(filePath, transaction)
+        }
+        if (filename.includes('-squads.xml')) {
+            await parseSquads(filePath, transaction)
+        }
+        await transaction.commit()
+    } catch (error) {
+        await transaction.rollback()
+        error.message = `Error with ${filename}: ${error.message}`
+        throw error
+    }
+}
 
 // PARSE RESULTS
 
