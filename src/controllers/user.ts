@@ -7,7 +7,10 @@ controller.addRoute({
     method: 'get',
     route: '/',
     callback: async (params) => {
-        return UserService.listFriends()
+        const { search } = params
+        if (search) {
+            return UserService.findByUsernameOrEmail(search)
+        }
     }
 })
 

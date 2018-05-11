@@ -30,7 +30,7 @@ export const findAll = async () => {
     return Fixture.findAll({
         limit: 500,
         order: [['gameDate', 'DESC']],
-        include: [ 
+        include: [
             { model: Club, as: 'home' },
             { model: Club, as: 'away' },
         ]

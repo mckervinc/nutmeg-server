@@ -38,7 +38,7 @@ const OPTIONS = {
     paranoid: true,
 }
 
-const User = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
+const User: any = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
 
 User.associate = (models) => {
     User.hasMany(models.Challenge)

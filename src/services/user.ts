@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 import * as createError from 'http-errors';
 
 import models from '../models'
-
+import { Op } from 'sequelize'
 const { User } = models;
 
 const SALT_ROUNDS = 10;
@@ -17,6 +17,23 @@ export const findByUsername = async (username) => {
 export const findByEmail = async (email) => {
     return User.findOne({
         where: { email }
+    })
+}
+
+export const findByUsernameOrEmail = async (search) => {
+    search = search.toLowerCase()
+    return User.findOne({
+        where: {
+            [Op.or]: [
+                {
+                    email: search
+                },
+                {
+                    username: search
+                }
+            ]
+        },
+        attributes: ['id', 'username', 'firstName', 'lastName']
     })
 }
 // STUB in production make this friends
