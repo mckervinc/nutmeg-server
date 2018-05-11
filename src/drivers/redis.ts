@@ -1,31 +1,15 @@
 import * as redis from 'redis'
-import * as bluebird from 'bluebird'
+import * as Bluebird from 'bluebird'
 import * as uuid from 'uuid/v4'
-bluebird.promisifyAll(redis.RedisClient.prototype)
-bluebird.promisifyAll(redis.Multi.prototype)
+
+interface RedisPromise extends redis.RedisClient {
+    [x: string]: any
+}
 
 const client = redis.createClient(process.env.REDISCLOUD_URL)
-
 client.on('connect', () => {
-    console.log('connected to redis')
+    console.log('Connected to redis')
 });
+Bluebird.promisifyAll(client)
 
-// export const createGame = (sessionId, dispatcher) => {
-//     const gamename = 'game';
-//     client.hmsetAsync(
-//         gamename, [
-//             'player1',
-//             sessionId,
-//             'player2',
-//             ''
-//         ]
-//     )
-//     dispatcher('game', {name: gamename, player: 'player1'}, sessionId)
-// }
-
-// export const listGames = async () => {
-//     const result = await client.hgetallAsync('game')
-//     console.dir(result)
-// }
-
-export default client
+export default client as RedisPromise

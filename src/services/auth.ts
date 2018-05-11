@@ -27,6 +27,7 @@ export const jwt = async (token, done) => {
     if (!token) {
         return done(createError(401))
     } else {
+        // todo check the token they're sending is valid
         return done(null, token)
     }
 }

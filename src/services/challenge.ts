@@ -1,9 +1,8 @@
 import * as uuid from 'uuid/v4'
 import models from '../models'
 import * as createError from 'http-errors'
-import * as Sequelize from 'sequelize';
 
-const { Challenge } = models;
+const { Challenge, ChallengeType, Fixture, Player, Club } = models;
 
 export const createChallenge = async (hostId: number, typeId: number, invitees: number[]) => {
     const challengeId = uuid()
@@ -27,6 +26,7 @@ export const createChallenge = async (hostId: number, typeId: number, invitees: 
         )
         return { challengeId }
     } catch (error) {
+        console.error(error)
         throw createError(500)
     }
 }
@@ -49,4 +49,32 @@ export const acceptChallenge = async (userId, challengeId) => {
             hasAccepted: true
         }
     })
+}
+
+export const listAvailablePlayers = async (userId, challengeId) => {
+    const challenge: any = await Challenge.findOne({
+        where: {
+            userId,
+            uuid: challengeId
+        },
+        include: [{
+            model: ChallengeType,
+            include: [{
+                model: Fixture,
+                include: [
+                    {
+                        model: Club,
+                        as: 'home',
+                        include: [Player]
+                    },
+                    {
+                        model: Club,
+                        as: 'away',
+                        include: [Player]
+                    }
+                ]
+            }]
+        }],
+    })
+    return challenge.challenge_type.fixture.home.players.concat(challenge.challenge_type.fixture.away.players)
 }

@@ -12,11 +12,12 @@ controller.addRoute({
     callback: (params, req, res) => {
         const user = _.pick(req.user, [
             'id',
-            'first_name',
-            'last_name',
+            'firstName',
+            'lastName',
             'email',
             'username'
         ])
+        console.log(user)
         return jwt.sign(user, process.env.JWT_SECRET)
     }
 })
