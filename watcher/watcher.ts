@@ -35,7 +35,7 @@ export const wait = (ms = 5000) => new Promise((resolve) => {
 });
 
 let DELAY_FACTOR = 0
-const DELAY_RATE = 1000
+const DELAY_RATE: number = parseInt(process.env.DELAY_RATE, 10) || 1000
 
 fs.watch(feedPath, async (eventType, filename) => {
     if (filename) {
