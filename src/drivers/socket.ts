@@ -25,6 +25,13 @@ const socketHandler = (io: SocketIO.Server) => {
             io.to(challenge).emit('message', `${user.username}: ${msg}`)
         })
 
+        socket.on('PLAYER_DRAFT', obj => {
+            io.to(challenge).emit('PLAYER_DRAFT', {
+                user,
+                ...obj
+            })
+        })
+
         socket.on('disconnect', () => {
             // if (token) {
             //     leaveChallenge(user.id, challenge)
