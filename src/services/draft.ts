@@ -4,8 +4,6 @@ import { redis } from '../drivers'
 export const createChallenge = async (id: string) => {
     redis.hmsetAsync(
         id, [
-            'joined',
-            '',
             'size',
             2
         ]
@@ -13,44 +11,33 @@ export const createChallenge = async (id: string) => {
 }
 
 export const joinChallenge = async (userId, challengeId) => {
+    await redis.saddAsync(`joined:${challengeId}`, userId)
+    const challengeSize = await redis.hgetAsync(challengeId, 'size')
     const challenge = await redis.hgetallAsync(challengeId)
-    if (challenge.joined) {
-        const joined = challenge.joined.split(',')
-        joined.push(userId)
-        await redis.hmsetAsync(
-            challengeId, [
-                'joined',
-                joined.join(',')
-            ]
-        )
-        return joined.length === parseInt(challenge.size, 10)
-
+    const members = await getChallengeMembers(challengeId)
+    console.log(challenge)
+    console.log(challengeSize)
+    console.log(members.length)
+    // Keeping loose equality for string to integer comparison (redis returns string)
+    // tslint:disable-next-line
+    if (challengeSize == members.length) {
+        return true
     } else {
-        await redis.hmsetAsync(
-            challengeId, [
-                'joined',
-                userId
-            ]
-        )
         return false
     }
 }
 
 export const leaveChallenge = async (userId, challengeId) => {
-    const challenge = await redis.hgetallAsync(challengeId)
-    if (challenge.joined) {
-        return redis.hmsetAsync(
-            challengeId, [
-                'joined',
-                _.pull(challenge.joined.split(','), String(userId)).join(',')
-            ]
-        )
-    }
+    return redis.sremAsync(`joined:${challengeId}`, userId)
+}
+
+export const getChallengeMembers = async (challengeId) => {
+    return redis.smembersAsync(`joined:${challengeId}`)
 }
 
 export const getChallenge = async (id: string) => {
-    const result = await redis.hgetallAsync(id)
-    console.dir(result)
+    const challenge = await redis.hgetallAsync(id)
+    return challenge
 }
 
 export const flush = async () => {

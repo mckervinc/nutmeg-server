@@ -8,10 +8,10 @@ const socketHandler = (io: SocketIO.Server) => {
         let user: any
         if (token) {
             user = jwt.verify(token, process.env.JWT_SECRET)
-            // const isReady = await joinChallenge(user.id, challenge)
-            // if (isReady) {
-            //     io.sockets.emit('message', 'ready!!!')
-            // }
+            const isReady = await joinChallenge(user.id, challenge)
+            if (isReady) {
+                console.log(challenge, 'is ready')
+            }
             console.log('user connected', user.id)
         } else {
             console.log('test user connected')
@@ -33,11 +33,11 @@ const socketHandler = (io: SocketIO.Server) => {
         })
 
         socket.on('disconnect', () => {
-            // if (token) {
-            //     leaveChallenge(user.id, challenge)
-            // }
-            // io.sockets.emit('message', 'not ready!!!')
-            console.log('user disconnected')
+            if (token) {
+                leaveChallenge(user.id, challenge)
+            }
+            console.log('not ready')
+            console.log('user disconnected', user.id || '')
         })
     })
 }
