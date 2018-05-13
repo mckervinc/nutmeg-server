@@ -42,15 +42,18 @@ fs.watch(feedPath, (eventType, filename) => {
         const filePath = path.join(feedPath, filename)
         if (fs.existsSync(filePath)) {
             if (queue.indexOf(filePath) === -1) {
-                console.log('Adding', filename, 'to the queue...')
-                queue.unshift(filePath)
-                if (!processing) {
-                    startProcess()
+                if (filePath.includes('.xml')) {
+                    console.log('Adding', filename, 'to the queue...')
+                    queue.unshift(filePath)
+                    if (!processing) {
+                        startProcess()
+                    }
                 }
             }
         }
     }
 })
+
 const startProcess = async () => {
     processing = true
     while (queue.length) {
