@@ -1,7 +1,8 @@
 import * as uuid from 'uuid/v4'
-import models from '../models'
 import * as createError from 'http-errors'
 
+import models from '../models'
+import { createDraft } from '../services/draft'
 const { Challenge, ChallengeType, Fixture, Player, Club } = models;
 
 export const createChallenge = async (hostId: number, typeId: number, invitees: number[]) => {
@@ -24,6 +25,9 @@ export const createChallenge = async (hostId: number, typeId: number, invitees: 
                 })
             })
         )
+        const availablePlayers = await listAvailablePlayers(challengeId)
+        const availablePlayerIds = availablePlayers.map(player => player.id)
+        await createDraft(challengeId, invitees, availablePlayerIds)
         return { challengeId }
     } catch (error) {
         console.error(error)
@@ -51,10 +55,9 @@ export const acceptChallenge = async (userId, challengeId) => {
     })
 }
 
-export const listAvailablePlayers = async (userId, challengeId) => {
+export const listAvailablePlayers = async (challengeId) => {
     const challenge: any = await Challenge.findOne({
         where: {
-            userId,
             uuid: challengeId
         },
         include: [{

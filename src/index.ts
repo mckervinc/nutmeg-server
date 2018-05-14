@@ -3,6 +3,7 @@ dotenv.config()
 import app from './App';
 import * as http from 'http';
 import * as socketIo from 'socket.io'
+import * as redisAdapter from 'socket.io-redis'
 import socketHandler from './drivers/socket'
 
 // SENTRY CONFIG
@@ -56,6 +57,7 @@ const onListening = () => {
 const server = http.createServer(app)
 // binding the socket server
 const io = socketIo(server)
+io.adapter(redisAdapter(process.env.REDISCLOUD_URL))
 
 socketHandler(io)
 

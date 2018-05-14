@@ -16,7 +16,7 @@ controller.addRoute({
     route: '/',
     callback: async (params, req, res) => {
         if (params.id) {
-            return ChallengeService.listAvailablePlayers(req.user.id, params.id)
+            return ChallengeService.listAvailablePlayers(params.id)
         }
         return ChallengeService.listChallengesByUser(req.user.id)
     }
