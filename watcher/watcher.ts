@@ -134,7 +134,7 @@ const parseResults = async (fileName, transaction) => {
                 homeId: homeClub.id,
                 awayId: awayClub.id
             }
-            return Fixture.upsert(fixture)
+            return Fixture.upsert(fixture, { transaction })
         })
     )
 

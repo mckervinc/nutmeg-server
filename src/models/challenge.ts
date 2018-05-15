@@ -1,5 +1,5 @@
 import * as Sequelize from 'sequelize'
-import { sequelize } from '../drivers'
+import sequelize from '../drivers/sequelize'
 
 const TABLE_NAME = 'challenge' // sequelize will automatically make this plural
 
@@ -18,11 +18,10 @@ const FIELDS: Sequelize.DefineAttributes = {
         defaultValue: false,
         allowNull: false,
     },
-    stakesValue: {
-        type: Sequelize.INTEGER,
-    },
-    stakesEmoji: {
-        type: Sequelize.STRING,
+    draftComplete: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
     }
 }
 
@@ -35,7 +34,7 @@ const Challenge = sequelize.define(TABLE_NAME, FIELDS, OPTIONS)
 Challenge.associate = (models) => {
     Challenge.belongsTo(models.User)
     Challenge.belongsTo(models.ChallengeType)
-
+    Challenge.hasMany(models.ChallengeDetail)
 }
 
 export default Challenge

@@ -1,9 +1,8 @@
 import * as jwt from 'jsonwebtoken'
-import * as draftServices from '../services/draft'
 import { redis } from '.';
+import * as draftServices from '../services/draft'
 
 const socketHandler = (io: SocketIO.Server) => {
-
     io.on('connection', async socket => {
         const { challengeId, token } = socket.handshake.query
         if (token) {
@@ -19,13 +18,22 @@ const socketHandler = (io: SocketIO.Server) => {
 
         socket.on('message', async msg => {
             // debug here
+            if (msg.includes('reset')) {
+                const id = msg.split(' ')[1]
+                await redis.delAsync(`draft:drafted:${id}`, `draft:user:drafted:${id}:*`)
+                await redis.hmsetAsync(`draft:details:${id}`, {
+                    isDone: false,
+                    isLive: false,
+                    draftIndex: 0
+                })
+            }
         })
 
     })
 }
 
 const draftHandler = async (user, challengeId, socket, io) => {
-    console.log(user.username, 'connected')
+    console.log(user.username, `connected to ${challengeId}`)
     socket.join(challengeId)
     await draftServices.joinDraft(user.id, challengeId)
     // we need to include some logic to send a payload back
@@ -34,6 +42,7 @@ const draftHandler = async (user, challengeId, socket, io) => {
         io.to(challengeId).emit('DRAFT_END')
     } else if (await draftServices.isDraftLive(challengeId)) {
         const draft = await draftServices.getDraftDetails(challengeId, user.id)
+        console.log(draft)
         socket.emit('NEXT_TURN', draft)
     } else if (await draftServices.isDraftReady(challengeId)) {
         io.to(challengeId).emit('DRAFT_READY')
@@ -71,6 +80,7 @@ const draftHandler = async (user, challengeId, socket, io) => {
                 const draft = await draftServices.getDraftDetails(challengeId, user.id)
                 if (draft.draftIndex >= draft.draftOrder.length) {
                     await draftServices.endDraft(challengeId)
+                    io.to(challengeId).emit('NEXT_TURN', draft)
                     io.to(challengeId).emit('DRAFT_END')
                 } else {
                     io.to(challengeId).emit('NEXT_TURN', draft)
@@ -80,6 +90,7 @@ const draftHandler = async (user, challengeId, socket, io) => {
 
             }
         } catch (error) {
+            console.log(error)
             socket.emit('ERROR', 'Woah he\'s already been drafted')
         }
     })
@@ -100,7 +111,6 @@ const draftHandler = async (user, challengeId, socket, io) => {
 
 const verifyToken = (token) => {
     return jwt.verify(token, process.env.JWT_SECRET)
-
 }
 
 export default socketHandler

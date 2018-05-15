@@ -1,5 +1,5 @@
 import * as Sequelize from 'sequelize'
-import { sequelize } from '../drivers'
+import sequelize from '../drivers/sequelize'
 
 const TABLE_NAME = 'user' // sequelize will automatically make this plural
 

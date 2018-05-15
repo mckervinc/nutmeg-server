@@ -1,10 +1,11 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
-import app from './App';
 import * as http from 'http';
 import * as socketIo from 'socket.io'
 import * as redisAdapter from 'socket.io-redis'
+import app from './App';
 import socketHandler from './drivers/socket'
+import models from './models'
 
 // SENTRY CONFIG
 declare global {

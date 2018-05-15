@@ -1,16 +1,18 @@
 import Challenge from './challenge'
 import ChallengeType from './challengeType'
+import ChallengeDetail from './challengeDetails'
 import Club from './club'
 import Fixture from './fixture'
 import Player from './player'
 import PlayerStat from './playerStat'
 import User from './user'
 import Standing from './standing'
-import { sequelize } from '../drivers'
+import sequelize from '../drivers/sequelize'
 
 const db = {
     Challenge,
     ChallengeType,
+    ChallengeDetail,
     Club,
     Fixture,
     Player,

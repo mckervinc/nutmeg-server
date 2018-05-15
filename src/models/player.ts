@@ -1,5 +1,5 @@
 import * as Sequelize from 'sequelize';
-import { sequelize } from '../drivers';
+import sequelize from '../drivers/sequelize'
 import Club from './club'
 import PlayerStat from './playerStat'
 

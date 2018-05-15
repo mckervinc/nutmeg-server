@@ -1,5 +1,7 @@
 import * as _ from 'lodash'
 import { redis } from '../drivers'
+import * as ChallengeServices from './challenge'
+
 const THIRTY_SECONDS = 30000
 
 // SCHEMA
@@ -7,7 +9,7 @@ const THIRTY_SECONDS = 30000
 // draft:lobby:[challengeId] is the draft lobby set
 // draft:drafted:[challengeId] is the drafted players set
 // draft:user:queue:[challengeId]:[userId] is the player queue list
-// draft:user:drafted:[challengeId]:[userId] is the drafted player set
+// draft:user:drafted:[challengeId]:[userId] is the drafted player list
 
 export const createDraft = async (challengeId: string, invitees: number[], availablePlayers) => {
     await redis.hmsetAsync(`draft:details:${challengeId}`, {
@@ -35,7 +37,7 @@ export const getDraftLobby = async (challengeId) => {
 
 export const getDraftDetails = async (challengeId: string, userId = null) => {
     const draft = await redis.hgetallAsync(`draft:details:${challengeId}`)
-    const draftedPlayers = await redis.smembersAsync(`draft:drafted:${challengeId}`)
+    const draftedPlayers = await getDraftedPlayers(challengeId)
     // gotta convert the draft order array back :( maybe we could use a redis list...
     if (draft.draftOrder) draft.draftOrder = JSON.parse(draft.draftOrder)
 
@@ -75,13 +77,12 @@ export const isDraftDone = async (challengeId: string) => {
 }
 
 export const getDraftedPlayers = async (challengeId) => {
-    return redis.smembersAsync(`draft:drafted:${challengeId}`)
+    return redis.lrangeAsync(`draft:drafted:${challengeId}`, 0, -1)
 }
 
 export const isPlayerDrafted = async (challengeId, playerId) => {
-    const isDrafted = await redis.sismemberAsync(`draft:drafted:${challengeId}`, playerId)
-    console.log('ARE THEY DRAFTED??', isDrafted)
-    return isDrafted === 1
+    const draftedPlayers = await getDraftedPlayers(challengeId)
+    return draftedPlayers.includes(playerId)
 }
 
 export const queuePlayer = async (userId, challengeId, playerId) => {
@@ -107,7 +108,7 @@ export const draftPlayer = async (userId, challengeId, playerId) => {
     const isDrafted = await isPlayerDrafted(challengeId, playerId)
     if (!isDrafted) {
         await redis.saddAsync(`draft:user:drafted:${challengeId}:${userId}`, playerId)
-        await redis.saddAsync(`draft:drafted:${challengeId}`, playerId)
+        await redis.rpushAsync(`draft:drafted:${challengeId}`, playerId)
     } else {
         throw new Error('Player already taken!')
     }
@@ -169,6 +170,8 @@ export const endDraft = async (challengeId) => {
         isLive: 'false',
         isDone: 'true'
     })
+    const draft = await getDraftDetails(challengeId)
+    return ChallengeServices.endDraft(challengeId, draft)
 }
 
 export const flush = async () => {
