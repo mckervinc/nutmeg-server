@@ -36,6 +36,7 @@ const draftHandler = async (user, challengeId, socket, io) => {
     console.log(user.username, `connected to ${challengeId}`)
     socket.join(challengeId)
     await draftServices.joinDraft(user.id, challengeId)
+    socket.emit('NEW_QUEUE', await draftServices.getQueue(user.id, challengeId))
     // we need to include some logic to send a payload back
     if (await draftServices.isDraftDone(challengeId)) {
         // should never get here... but push them back if needed
@@ -54,12 +55,16 @@ const draftHandler = async (user, challengeId, socket, io) => {
 
     socket.on('QUEUE_PLAYER', async playerId => {
         // STUB
-        // await draftServices.queuePlayer(user.id, challengeId, playerId)
-        // socket.emit()
+        await draftServices.queuePlayer(user.id, challengeId, playerId)
+        const queue = await draftServices.getQueue(user.id, challengeId)
+        socket.emit('NEW_QUEUE', queue)
     })
 
-    socket.on('UNQUEUE_PLAYER', () => {
+    socket.on('UNQUEUE_PLAYER', async (playerId) => {
         // STUB
+        await draftServices.unqueuePlayer(user.id, challengeId, playerId)
+        const queue = await draftServices.getQueue(user.id, challengeId)
+        socket.emit('NEW_QUEUE', queue)
     })
 
     socket.on('DRAFT_START', async () => {

@@ -40,7 +40,6 @@ export const getDraftDetails = async (challengeId: string, userId = null) => {
     const draftedPlayers = await getDraftedPlayers(challengeId)
     // gotta convert the draft order array back :( maybe we could use a redis list...
     if (draft.draftOrder) draft.draftOrder = JSON.parse(draft.draftOrder)
-
     if (userId === null) {
         return {
             ...draft,
@@ -77,7 +76,8 @@ export const isDraftDone = async (challengeId: string) => {
 }
 
 export const getDraftedPlayers = async (challengeId) => {
-    return redis.lrangeAsync(`draft:drafted:${challengeId}`, 0, -1)
+    const draftedPlayers = await redis.lrangeAsync(`draft:drafted:${challengeId}`, 0, -1)
+    return draftedPlayers.map(Number)
 }
 
 export const isPlayerDrafted = async (challengeId, playerId) => {
@@ -88,20 +88,22 @@ export const isPlayerDrafted = async (challengeId, playerId) => {
 export const queuePlayer = async (userId, challengeId, playerId) => {
     const queue = await getQueue(userId, challengeId)
     if (!queue.includes(playerId)) {
-        await redis.rpushAsync(`draft:user:queue:${challengeId}:${userId}`)
+        await redis.rpushAsync(`draft:user:queue:${challengeId}:${userId}`, playerId)
     }
 }
 
 export const unqueuePlayer = async (userId, challengeId, playerId) => {
-    return redis.lremAsync(`draft:user:queue:${challengeId}:${userId}`, playerId)
+    return redis.lremAsync(`draft:user:queue:${challengeId}:${userId}`, 1, playerId)
 }
 
 export const getQueue = async (userId, challengeId) => {
-    return redis.lrangeAsync(`draft:user:queue:${challengeId}:${userId}`, 0, -1)
+    const queue = await redis.lrangeAsync(`draft:user:queue:${challengeId}:${userId}`, 0, -1)
+    return queue.map(Number)
 }
 
 export const getMyTeam = async (userId, challengeId) => {
-    return redis.smembersAsync(`draft:user:drafted:${challengeId}:${userId}`)
+    const team = await redis.smembersAsync(`draft:user:drafted:${challengeId}:${userId}`)
+    return team.map(Number)
 }
 
 export const draftPlayer = async (userId, challengeId, playerId) => {
