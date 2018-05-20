@@ -106,12 +106,13 @@ const parseResults = async (fileName, transaction) => {
     return Promise.all(
         matchData.map(async match => {
             const gameWeek = match.MatchInfo.$.MatchDay
+            const isComplete = match.MatchInfo.$.Period === 'FullTime' ? true : false
             const gameId = match.$.uID
             const date = match.MatchInfo.Date // this is going to be in BST (british time)
             const teams: any = {}
             match.TeamData.forEach(team => {
                 teams[team.$.Side] = {
-                    score: team.$.Score || -1,
+                    score: team.$.Score || 0,
                     id: team.$.TeamRef
                 }
             })
@@ -140,7 +141,7 @@ const parseResults = async (fileName, transaction) => {
 
 }
 
-// PARSE MATCH RESULT
+// PARSE MATCH RESULT - these include player stats
 
 const parseMatchResult = async (fileName, transaction) => {
     const data = fs.readFileSync(fileName)
@@ -206,8 +207,8 @@ const parseStandings = async (fileName, transaction) => {
 const parseSquads = async (fileName, transaction) => {
     const data = fs.readFileSync(fileName)
     const result: any = await parseString(data)
-    let teams = result.SoccerFeed.SoccerDocument.Team
-    teams = teams.concat(result.SoccerFeed.SoccerDocument.PlayerChanges.Team)
+    let teams = result.SoccerFeed.SoccerDocument.PlayerChanges.Team // start with player changes first so as not to write over stale data
+    teams = teams.concat(result.SoccerFeed.SoccerDocument.Team)
 
     return Promise.all(
         teams.map(async (team, index) => {

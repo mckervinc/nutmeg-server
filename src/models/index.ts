@@ -7,6 +7,7 @@ import Player from './player'
 import PlayerStat from './playerStat'
 import User from './user'
 import Standing from './standing'
+import Feed from './feed'
 import sequelize from '../drivers/sequelize'
 
 const db = {
@@ -14,6 +15,7 @@ const db = {
     ChallengeType,
     ChallengeDetail,
     Club,
+    Feed,
     Fixture,
     Player,
     PlayerStat,

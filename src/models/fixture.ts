@@ -20,6 +20,10 @@ const FIELDS: Sequelize.DefineAttributes = {
     },
     week: {
         type: Sequelize.INTEGER
+    },
+    isComplete: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
     }
 }
 
