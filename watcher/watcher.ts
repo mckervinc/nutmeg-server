@@ -133,7 +133,8 @@ const parseResults = async (fileName, transaction) => {
                 gameDate: date + '+01', // TODO: convert this to not BST when daylight savings happens
                 week: gameWeek,
                 homeId: homeClub.id,
-                awayId: awayClub.id
+                awayId: awayClub.id,
+                isComplete
             }
             return Fixture.upsert(fixture, { transaction })
         })
