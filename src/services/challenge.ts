@@ -5,34 +5,35 @@ import models from '../models'
 import { createDraft } from '../services/draft'
 const { Challenge, ChallengeType, ChallengeDetail, Fixture, Player, Club, sequelize } = models;
 
-export const createChallenge = async (hostId: number, typeId: number, invitees: number[]) => {
+export const createChallenge = async (user, title: string, typeId: number) => {
     const challengeId = uuid()
+    const randomNumber = Math.floor(1000 + Math.random() * 9000)
+    const inviteCode = user.username + randomNumber
     // TODO implement this as a transaction so its rolled back if all of it fails
     try {
         await Challenge.create({
             uuid: challengeId,
-            userId: hostId,
+            userId: user.id,
             challengeTypeId: typeId,
             isHost: true,
-            hasAccepted: true
+            hasAccepted: true,
+            title,
+            inviteCode
         })
-        await Promise.all(
-            invitees.map(async inviteeId => {
-                return Challenge.create({
-                    uuid: challengeId,
-                    userId: inviteeId,
-                    challengeTypeId: typeId
-                })
-            })
-        )
-        const availablePlayers = await listAvailablePlayers(challengeId)
-        const availablePlayerIds = availablePlayers.map(player => player.id)
-        await createDraft(challengeId, invitees, availablePlayerIds)
-        return { challengeId }
     } catch (error) {
         console.error(error)
         throw createError(500)
     }
+}
+
+export const joinChallenge = async (user, inviteCode: string) => {
+    const challenges = await Challenge.findAndCountAll({
+        where: {
+            inviteCode
+        }
+    })
+    console.log(challenges)
+    return true
 }
 
 export const listChallengesByUser = async (userId) => {

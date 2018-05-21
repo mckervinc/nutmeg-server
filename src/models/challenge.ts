@@ -22,6 +22,12 @@ const FIELDS: Sequelize.DefineAttributes = {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
         allowNull: false
+    },
+    title: {
+        type: Sequelize.STRING
+    },
+    inviteCode: {
+        type: Sequelize.STRING
     }
 }
 

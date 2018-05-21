@@ -7,7 +7,15 @@ controller.addRoute({
     method: 'post',
     route: '/create',
     callback: async (params, req, res) => {
-        return ChallengeService.createChallenge(req.user.id, params.typeId, params.invitees)
+        return ChallengeService.createChallenge(req.user, params.title, params.typeId)
+    }
+})
+
+controller.addRoute({
+    method: 'post',
+    route: '/join',
+    callback: async (params, req, res) => {
+        return ChallengeService.joinChallenge(req.user, params.inviteCode)
     }
 })
 

@@ -17,6 +17,9 @@ const FIELDS: Sequelize.DefineAttributes = {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
+    },
+    imageUrl: {
+        type: Sequelize.STRING
     }
 }
 
